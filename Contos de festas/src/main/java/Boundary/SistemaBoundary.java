@@ -150,5 +150,96 @@ public class SistemaBoundary {
             }
         }
     }
+    private void menuBuffet(Buffet buffet) {
+        while (true) {
+            System.out.println("Menu Buffet");
+            System.out.println("1. Ver solicitações de reserva");
+            System.out.println("2. Ver agendamentos");
+            System.out.println("3. Cancelar agendamento");
+            System.out.println("4. Avaliar cliente");
+            System.out.println("5. Sair");
+            int opcao = scanner.nextInt();
+            scanner.nextLine();
 
+            if (opcao == 1) {
+                verSolicitacoesReserva(buffet);
+            } else if (opcao == 2) {
+                verAgendamentos(buffet);
+            } else if (opcao == 3) {
+                cancelarAgendamentoBuffet(buffet);
+            } else if (opcao == 4) {
+                avaliarCliente(buffet);
+            } else if (opcao == 5) {
+                break;
+            } else {
+                System.out.println("Opção inválida.");
+            }
+        }
+    }
+
+    private void novoAgendamento(Cliente cliente) {
+        System.out.println("Novo Agendamento");
+    
+        System.out.println("Selecione o buffet:");
+        List<Buffet> buffetsDisponiveis = sistema.getBuffets();
+        for (int i = 0; i < buffetsDisponiveis.size(); i++) {
+            System.out.println((i + 1) + ". " + buffetsDisponiveis.get(i).getNome());
+        }
+        int opcaoBuffet = scanner.nextInt();
+        scanner.nextLine();
+        if (opcaoBuffet < 1 || opcaoBuffet > buffetsDisponiveis.size()) {
+            System.out.println("Opção inválida.");
+            return;
+        }
+        Buffet buffetSelecionado = buffetsDisponiveis.get(opcaoBuffet - 1);
+    
+        System.out.println("Selecione a data:");
+        List<String> datasDisponiveisString = buffetSelecionado.getDatasDisponiveis();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        for (int i = 0; i < datasDisponiveisString.size(); i++) {
+            System.out.println((i + 1) + ". " + datasDisponiveisString.get(i));
+        }
+        int opcaoData = scanner.nextInt();
+        scanner.nextLine();
+        if (opcaoData < 1 || opcaoData > datasDisponiveisString.size()) {
+            System.out.println("Opção inválida.");
+            return;
+        }
+        String dataSelecionadaString = datasDisponiveisString.get(opcaoData - 1);
+        Date dataSelecionada;
+        try {
+            dataSelecionada = dateFormat.parse(dataSelecionadaString);
+        } catch (ParseException e) {
+            System.out.println("Erro ao converter data.");
+            return;
+        }
+    
+        System.out.println("Selecione o horário:");
+        List<String> horariosDisponiveis = buffetSelecionado.getHorariosDisponiveis();
+        for (int i = 0; i < horariosDisponiveis.size(); i++) {
+            System.out.println((i + 1) + ". " + horariosDisponiveis.get(i));
+        }
+        int opcaoHorario = scanner.nextInt();
+        scanner.nextLine();
+        if (opcaoHorario < 1 || opcaoHorario > horariosDisponiveis.size()) {
+            System.out.println("Opção inválida.");
+            return;
+        }
+        String horarioSelecionado = horariosDisponiveis.get(opcaoHorario - 1);
+    
+        if (sistema.agendarBuffet(cliente, buffetSelecionado, horarioSelecionado, dataSelecionada)) {
+            System.out.println("Agendamento realizado com sucesso!");
+        } else {
+            System.out.println("Falha ao realizar agendamento.");
+        }
+    }
+
+    private void meusAgendamentos(Cliente cliente) {
+        System.out.println("Meus Agendamentos");
+        List<Agendamento> agendamentos = sistema.getAgendamentosCliente(cliente);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        for (Agendamento agendamento : agendamentos) {
+            System.out.println("Buffet: " + agendamento.getBuffet().getNome() + ", Data: " + dateFormat.format(agendamento.getData()) + ", Horário: " + agendamento.getHorario());
+        }
+    }
    
